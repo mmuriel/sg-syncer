@@ -1,0 +1,12 @@
+{
+  "name": "sg-syncer",
+  "version": "1.0.0",
+  "description": "Software de sincronización de archivos de video para el sistema SIBA GUIDE",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "mmuriel@siba.com.co",
+  "license": "ISC"
+}
