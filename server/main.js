@@ -39,7 +39,12 @@ var httpServ = http.createServer(function(req,res){
 
             break;
         case '/socket.html':
-            fs.readFile(__dirname + '/public' +path, function(error, data){
+
+            let pathToHtmlFiles = __dirname + '/../public' +path;
+            console.log(pathToHtmlFiles);
+
+
+            fs.readFile(pathToHtmlFiles, function(error, data){
 
                 if (error){
                     res.writeHead(404);

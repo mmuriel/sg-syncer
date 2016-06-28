@@ -4,7 +4,6 @@
   "description": "Software de sincronización de archivos de video para el sistema SIBA GUIDE",
   "main": "index.js",
   "scripts": {
-    //"test": "echo \"Error: no test specified\" && exit 1"
     "start": "nodemon server/main.js"
   },
   "keywords": [],
