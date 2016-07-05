@@ -1,14 +1,30 @@
 'use strict';
 
-/* Requerimientos del servidor de sockets */
+/* Requerimientos de librerias */
 var http = require('http');
 var url = require('url');
 var fs = require('fs');
 var socketio = require('socket.io');
+var WebTorrent = require('webtorrent');
+
+/* Instanciando el cliente Webtorrent */
+var torrentOpt = {
+  //announce: [],              // Torrent trackers to use (added to list in .torrent or magnet uri)
+  //getAnnounceOpts: Function, // Custom callback to allow sending extra parameters to the tracker
+  maxWebConns: 8,       // Max number of simultaneous connections per web seed [default=4]
+  path: '/home/sibaguide/videos/',              // Folder to download files to (default=`/tmp/webtorrent/`)
+  //store: Function            // Custom chunk store (must follow [abstract-chunk-store](https://www.npmjs.com/package/abstract-chunk-store) API)
+};
+var wtClient = new WebTorrent();
 
 
-
+/* ---------------------------------------------------------------------- */
+/* ---------------------------------------------------------------------- */
 /* Iniciando las rutinas del servidor de sockets */
+/* ---------------------------------------------------------------------- */
+/* ---------------------------------------------------------------------- */
+
+/* Instancia el servidro http */
 var httpServ = http.createServer(function(req,res){
 
     var path = url.parse(req.url).pathname;
@@ -124,7 +140,7 @@ socketServer.sockets.on('connection', function(socket){
 
 
 /*
-    Empieza a enviar notificaciones
+    Empieza a enviar notificaciones basados en tiempo
 */
 
 
@@ -138,11 +154,17 @@ var handlerevent = setInterval(function(){
 },3000);
 
 
+/* ---------------------------------------------------------------------- */
+/* ---------------------------------------------------------------------- */
+/* 
 
+    Rutinas de analisis del sistema de archivos buscando nuevos archivos
+    para agregarlos a red de torrents.
 
+*/
+/* ---------------------------------------------------------------------- */
+/* ---------------------------------------------------------------------- */
 
-
-//console.log(fs);
 
 
 /*
@@ -169,14 +191,31 @@ var chokidar = require('chokidar');
 var watcher = chokidar.watch(pathToReadFor);
 watcher.on('add',function(path){
 
-    let expReg = new RegExp("\\.mov$|\\.mpg$|\\.mpeg$|\\.wmv$|");
+    let expReg = new RegExp("\\.mov$|\\.mpg$|\\.mpeg$|\\.wmv$");
     if (typeof path == 'string'){
 
         if (expReg.test(path)){
-            console.log(path);
-            /* Notifica a los clientes que hay nuevos archivos */
-            socketServer.sockets.emit('new torrent',{'magnetURI':''+path+''});
-
+            /* Genera una semilla del nuevo archivo */
+            seedNewTorrent(path);
+            
         }
     }
 });
+
+
+
+var seedNewTorrent = function (pathToFile){
+
+
+    var resSeed = wtClient.seed(pathToFile,torrentOpt,function(torrent){
+
+        console.log(torrent.name);
+        console.log(torrent.infoHash);
+        console.log(torrent.magnetURI);
+        /* Notifica a los clientes que hay nuevos archivos */
+        socketServer.sockets.emit('new torrent',{'magnetURI': `${torrent.magnetURI}`});
+
+
+    });
+
+}

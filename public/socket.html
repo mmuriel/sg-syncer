@@ -19,7 +19,8 @@
 
 		socket.on('new torrent', function(data){
 
-			console.log("Nuevo torrent disponible: "+data.message);
+			console.log("Nuevo torrent disponible: "+data.magnetURI);
+			
 
 		});
 

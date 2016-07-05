@@ -2,10 +2,13 @@
 
 /* Requerimientos */
 var socketIoClient = require('socket.io-client');
-var socket = socketIoClient.connect('http://192.168.1.2:9000');
+var socket = socketIoClient.connect('http://s12.sientifica.com:9000');
 var WebTorrent = require('webtorrent')
 var fs = require('fs')
 var client = new WebTorrent();
+
+
+var pathToSaveFiles = '/Users/macuser/sibaguide/videos/';
 
 
 
@@ -21,7 +24,9 @@ socket.on('message', function(data){
 socket.on('new torrent', function(data){
 
 	console.log("Nuevo torrent disponible: "+data.magnetURI);
-	client.add(data.magnetURI, function (torrent) {
+
+	
+	client.add(data.magnetURI,{path:pathToSaveFiles},function (torrent) {
 
 	  torrent.files.forEach(function (file) {
 	    console.log('Started saving ' + file.name)
