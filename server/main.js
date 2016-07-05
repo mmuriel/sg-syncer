@@ -19,17 +19,17 @@ var httpServ = http.createServer(function(req,res){
 
         case '/':
 
-            let localIndexHtml = "<!DOCTYPE html>";
-            localIndexHtml += "<html>";
-            localIndexHtml += "<head>";
-            localIndexHtml += "    <meta charset='utf-8'>";
-            localIndexHtml += "    <meta name='viewport' content='width=device-width, initial-scale=1'>";
-            localIndexHtml += "    <title></title>";
-            localIndexHtml += "</head>";
-            localIndexHtml += "<body>";
-            localIndexHtml += "    <h1>Test de conexión por websockets</h1>";
-            localIndexHtml += "</body>";
-            localIndexHtml += "</html>";
+            let localIndexHtml = `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <title>SG-Syncer</title>
+</head>
+<body>
+    <h1>SG-Syncer system</h1>
+</body>
+</html>`;
 
             res.writeHead(200,{'Content-Type':"text/html"});
             res.write(localIndexHtml);
@@ -41,11 +41,7 @@ var httpServ = http.createServer(function(req,res){
         case '/socket.html':
 
             let pathToHtmlFiles = __dirname + '/../public' +path;
-            console.log(pathToHtmlFiles);
-
-
             fs.readFile(pathToHtmlFiles, function(error, data){
-
                 if (error){
                     res.writeHead(404);
                     res.write("opps this doesn't exist - 404");
@@ -56,7 +52,6 @@ var httpServ = http.createServer(function(req,res){
                     res.write(data, "utf8");
                     res.end();
                 }
-
             });
             break;
 
@@ -133,15 +128,15 @@ socketServer.sockets.on('connection', function(socket){
 */
 
 
-/*
+
 var handlerevent = setInterval(function(){
     //console.log(socketServer);
-    //console.log(Date.now());
+    console.log(Date.now());
     //socket.emit('message', {'message': ''+Date.now()+''});
-    //socketServer.sockets.emit('message',{'message':''+Date.now()+''});
+    socketServer.sockets.emit('message',{'message':''+Date.now()+''});
 
 },3000);
-*/
+
 
 
 
@@ -168,17 +163,19 @@ var fsWatcher = fs.watch("/var/www/html/siba_videos/files",function(e,chng){
 
 });
 */
+//let pathToReadFor = '/var/www/html/siba_videos/files/';
+let pathToReadFor = '/home/sibaguide/videos/';
 var chokidar = require('chokidar');
-var watcher = chokidar.watch("/var/www/html/siba_videos/files/");
+var watcher = chokidar.watch(pathToReadFor);
 watcher.on('add',function(path){
 
-    let expReg = new RegExp("\\.torrent$");
+    let expReg = new RegExp("\\.mov$|\\.mpg$|\\.mpeg$|\\.wmv$|");
     if (typeof path == 'string'){
 
         if (expReg.test(path)){
             console.log(path);
             /* Notifica a los clientes que hay nuevos archivos */
-            socketServer.sockets.emit('new torrent',{'message':''+path+''});
+            socketServer.sockets.emit('new torrent',{'magnetURI':''+path+''});
 
         }
     }
