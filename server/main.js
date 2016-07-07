@@ -144,15 +144,23 @@ socketServer.sockets.on('connection', function(socket){
 */
 
 
-
+/*
 var handlerevent = setInterval(function(){
     //console.log(socketServer);
-    console.log(Date.now());
+    //console.log(Date.now());
     //socket.emit('message', {'message': ''+Date.now()+''});
-    socketServer.sockets.emit('message',{'message':''+Date.now()+''});
+    //socketServer.sockets.emit('message',{'message':''+Date.now()+''});
+    console.log(wtClient.torrents.length);
+    
+    wtClient.torrents.forEach(function(torrent){
 
+        console.info(torrent.infoHash);
+
+    });
+    
+    console.log("------------------");
 },3000);
-
+*/
 
 /* ---------------------------------------------------------------------- */
 /* ---------------------------------------------------------------------- */
@@ -189,6 +197,7 @@ var fsWatcher = fs.watch("/var/www/html/siba_videos/files",function(e,chng){
 let pathToReadFor = '/home/sibaguide/videos/';
 var chokidar = require('chokidar');
 var watcher = chokidar.watch(pathToReadFor);
+var totalSeeds = 0;
 watcher.on('add',function(path){
 
     let expReg = new RegExp("\\.mov$|\\.mpg$|\\.mpeg$|\\.wmv$");
@@ -197,6 +206,8 @@ watcher.on('add',function(path){
         if (expReg.test(path)){
             /* Genera una semilla del nuevo archivo */
             seedNewTorrent(path);
+            totalSeeds++;
+            console.log(`Total seeds: ${totalSeeds}`);
             
         }
     }
@@ -211,7 +222,7 @@ var seedNewTorrent = function (pathToFile){
 
         console.log(torrent.name);
         console.log(torrent.infoHash);
-        console.log(torrent.magnetURI);
+        //console.log(torrent.magnetURI);
         /* Notifica a los clientes que hay nuevos archivos */
         socketServer.sockets.emit('new torrent',{'magnetURI': `${torrent.magnetURI}`});
 
