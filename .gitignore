@@ -35,3 +35,6 @@ jspm_packages
 
 # Optional REPL history
 .node_repl_history
+
+# Sacando el archivo de configuracion del proyecto
+lib/SgCnf.js
