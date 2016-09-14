@@ -9,6 +9,7 @@ var SgCnf = {
 		  //path: '/videos/',              // Folder to download files to (default=`/tmp/webtorrent/`)
 		  //store: Function            // Custom chunk store (must follow [abstract-chunk-store](https://www.npmjs.com/package/abstract-chunk-store) API)
 		},
+	maxActiveTorrents: 20,
 	pathToSource: '/videos/', //Path in filesystem to watch for new added files.
 	pathToDest:'/videos/', //Path in filesystem to save downloaded files
 	socketEndPoint:'http://s12.sientifica.com:9000',//Socketio server URL
