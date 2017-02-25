@@ -1,0 +1,66 @@
+Casos de uso básico (Los  que cumplen que el objetivo central del sistema)
+==============================================================================
+1. Como servidor, detectar un nuevo archivo en una carpeta del FS, asi el servidor puede generar un nuevo archivo torrent que luego se distribuirá por la red de nodos.
+
+Secuencia natural:
+
+1.1. El servidor inicia la verificación en tiempo real de una carpeta del sistema de archivos para detectar cuando un nuevo archivo ha sido agregado a dicha carpeta.
+1.2. El usuario deposita un nuevo archivo en la carpeta que el servidor está observando permanentemente
+1.3. El servidor detecta el nuevo archivo y notifica a los componentes de software suscritos del nuevo archivo en el FS.
+
+
+2. Como servidor, Agregar un archivo a la red torrent.
+
+Secuencia natural: 
+2.1. El servidor recibe una notificación de la existencia de un nuevo archivo en el FS
+2.2. El servidor genera un nuevo archivo torrent a partir del nuevo en el FS
+2.3. El servidor persiste la información sobre el nuevo torrent, almacenando los headers del torrent y la fecha de generación del mismo
+
+
+3. Como cliente, conectar al servidor de sockets.
+
+Secuencia natural:
+3.1. El administrador del equipo SIBA GUIDE inicia el software cliente (esto puede ser autómatico con solo encender la máquina física)
+3.2. El software del equipo cliente lee los parametros de identificación del equipo y los carga en memoria.
+3.3. Inicia una sesión de conexión con el servidor de contenidos.
+3.4. El servidor retorna un mensaje de exito de la conexión
+3.5. El equipo cliente se vincula a un canal exclusivo para mensajes directos entre el ese cliente y el servidor de contenidos.
+
+
+4. Como servidor, Notificar de la existencia de un nuevo torrent disponible en la red a los clientes.
+
+Secuencia natural:
+
+4.1. El servidor ha generado un nuevo torrent
+4.2. El servidor envia un mensaje a todos los clientes conectados vía websockets indicando que hay un nuevo torrent y enviando los parametros necesarios para iniciar su descarga en los clientes SIBA GUIDE.
+
+
+5. Como cliente, Iniciar la descarga de un nuevo torrent.
+
+Secuencia natural:
+
+5.1. El cliente recibe una notificación via websockets desde el servidor de contenidos indicando la existencia de un nuevo torrent
+5.2. El cliente toma el payload de la notificación con los datos necesarios para iniciar el proceso de descarga y lo agrega a su cliente webtorrent.
+5.3. El cliente webtorrent inicia la descarga buscando los nodos más cercanos a enviar y recibir trozos del archivo a distribuir relacionado con el archivo torrent.
+5.4. El cliente termina la descarga del archivo
+5.5. El cliente persiste la información del nuevo archivo, almacenando un token de identificación y la fecha de descarga.
+5.6. El cliente mantiene activo por 1 mes el archivo torrent, disponible para descargar por clientes que se agregen posteriormente a la red.
+
+
+6. Como administrador del servidor de contenidos, iniciar el servidor, asi la red de distribución de videos inicia la operación.
+
+Secuencia natural:
+
+6.1. El usuario accede a una terminal de su equipo local
+6.2. El usuario inicia una nueva sesión de conexión remota al servidor de contenido vía ssh, con las credenciales suministradas para tal tarea.
+6.3. El usuario inicia con un comando el servidor contenidos.
+6.4. El usuario cierra su sesión de conexión remota vía ssh.
+
+7. Como administrador del equipo cliente SIBA GUIDE, iniciar el equipo cliente para que empiece a desplegar contenido a los usuarios finales y sincronizar el contenido con el servidor de contenidos.
+8. Como administrador del servidor de contenidos, parametrizar los valores necesarios para iniciar el servidor de contenidos
+9. Como administrador del cliente SIBA GUIDE, parametrizar los valores necesarios del equipo para que pueda conectarse a la red de distribución de contenidos a sincronizar los mismos.
+
+
+Casos de uso adcionales (Los que permiten optimizar la operación)
+==============================================================================
+7. Como servidor, listar los X últimos torrents agregados a la red (por rango de fecha)

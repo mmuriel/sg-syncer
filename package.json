@@ -4,7 +4,8 @@
   "description": "Software de sincronización de archivos de video para el sistema SIBA GUIDE",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon server/db.js"
+    "start": "nodemon server/db.js",
+    "build": "babel sg-syncer/models/*.js sg-syncer/models/*.js sg-syncer/test/*.js   -d dist/"
   },
   "keywords": [],
   "author": "mmuriel@siba.com.co",
@@ -12,12 +13,15 @@
   "dependencies": {
     "chokidar": "^1.6.0",
     "memwatch-next": "^0.3.0",
+    "soap": "^0.17.0",
     "socket.io": "^1.4.8",
     "socket.io-client": "^1.4.8",
     "sqlite-sync": "^0.3.5",
     "webtorrent": "^0.95.2"
   },
   "devDependencies": {
+    "babel-cli": "^6.23.0",
+    "babel-preset-env": "^1.1.10",
     "heapdump": "^0.3.7",
     "nodemon": "^1.9.2"
   }

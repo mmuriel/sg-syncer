@@ -1,5 +1,5 @@
 var SgCnf = require('./lib/SgCnf');
-var sgClient;
+
 
 
 // get the second argument passed
@@ -12,7 +12,7 @@ if(process.argv[2] && typeof process.argv[2] === 'string'){
 
 	switch(process.argv[2]){
 		case 'server':
-			sgClient = require('./lib/SgServer');
+			sgServerController = require('./sg-syncer/controllers/SgServerController');
 		break;
 
 		//client
