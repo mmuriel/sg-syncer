@@ -1,5 +1,9 @@
 "use strict";
 
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /*
@@ -12,3 +16,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var SocketsCommunicator = function SocketsCommunicator() {
 	_classCallCheck(this, SocketsCommunicator);
 };
+
+//Usando require();
+//module.exports = exports = SocketsCommunicator;
+
+//Usando Import
+
+
+exports.default = SocketsCommunicator;

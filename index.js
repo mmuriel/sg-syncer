@@ -1,4 +1,4 @@
-var SgCnf = require('./lib/SgCnf');
+var SgCnf = require('./dist/sg-syncer/SgCnf');
 
 
 
@@ -12,12 +12,33 @@ if(process.argv[2] && typeof process.argv[2] === 'string'){
 
 	switch(process.argv[2]){
 		case 'server':
-			sgServerController = require('./sg-syncer/controllers/SgServerController');
+
+			let method = '';
+			let SgServerController = require('./sg-syncer/controllers/SgServerController');
+			sgcontroller = new SgServerController();
+
+			if (process.argv[3] && typeof process.argv[3] === 'string')
+				method = 'init';
+			switch(method){
+
+
+				case 'init':
+
+					sgcontroller.init(SgCnf.pathToPublic,SgCnf.httpPort,SgCnf.pathToSource,SgCnf.pathToDb);
+					break;
+				default:
+					sgcontroller.init(SgCnf.pathToPublic,SgCnf.httpPort,SgCnf.pathToSource,SgCnf.pathToDb);
+					break;
+
+			}
 		break;
 
 		//client
 		default:
-			sgClient = require('./lib/SgCliente');
+			let method = '';
+			let SgClientController = require('./sg-syncer/controllers/SgClientController');
+			sgclient = new SgClientController(SgCnf);
+			sclient.init();
 	}
 
 }else{

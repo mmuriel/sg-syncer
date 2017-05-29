@@ -10,3 +10,9 @@ class SocketsCommunicator{
 
 
 }
+
+//Usando require();
+//module.exports = exports = SocketsCommunicator;
+
+//Usando Import
+export default SocketsCommunicator;
