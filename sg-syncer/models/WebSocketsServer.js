@@ -23,7 +23,7 @@ class WebSocketsServer{
 		    /* Registra el socket */
 		    socket.emit('message', {'message': 'Te has conectado al servidor  de sockets exitosamente...'});
 		    //console.log(socketServer.sockets);
-		    //console.log(socket.client);
+		    console.log(socket.client);
 
 		    /* -------- */
 		    socket.on('subscribe', (data)=>{ 
@@ -39,7 +39,7 @@ class WebSocketsServer{
 		    });
 
 		    socket.on('message',(data)=>{
-		        console.log(data.message);
+		        socket.emit('messageresponse',{"message":"200"});
 		    });
 
 		    socket.on('getlasttorrents',(data)=>{

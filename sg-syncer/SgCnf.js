@@ -15,6 +15,7 @@ var SgCnf = {
 	pathToDb: __dirname+'/../db/sgdb.db',//Path to sqlite DB
 	httpPort: '9000',
 	pathToPublic: __dirname+'/../public/', //Path in filesystem to public http root folder
+	wsdl: 'http://sbvideos.siba.com.co/siba/wsdl',//Wsdl endpoint to report videos downloaded or not
 
 };
 

@@ -15,7 +15,14 @@ var SgServerController = function () {
 	function SgServerController() {
 		_classCallCheck(this, SgServerController);
 
-		this.dispatchForNewFile = this.dispatchForNewFile.bind(this);
+		this.db = {};
+		this.helpers = {};
+		this.socketsServer = {};
+		this.fileWatcher = {};
+		this.wtClient = {};
+		this.dispatchForNewFile = function (data) {
+			console.log('Data desde dispatchForNewFile... ' + data);
+		};
 	}
 
 	_createClass(SgServerController, [{
@@ -33,36 +40,29 @@ var SgServerController = function () {
 			//1. Inicia el servidor de sockets
 			//===========================================================================
 			var webServer = new WebServer(pathToPublic, httpPort);
+			this.socketsServer = new WebSocketsServer(webServer);
 
-			/*
-   this.socketsServer = new WebSocketsServer(webServer);
-   
-   	//===========================================================================
-   //2. Empieza a escuchar por nuevos archivos en la carpeta seleccionada
-   //===========================================================================
-   this.fileWatcher = new FileWatcher(pathToSource);
-   this.fileWatcher.startWatchForFiles((data)=>{
-   		console.log(`Nuevo archivo ingresado... ${data}`);
-   	});
-   		//===========================================================================
-   //3. Inicializa el cliente de webtorrent
-   //===========================================================================
-   this.wtClient = new WtClient();
-   		//===========================================================================
-   //4. Empieza a escuchar los sockets
-   //===========================================================================
-   this.socketsServer.startListenToSockets(this.db,this.wtClient);
-   	//===========================================================================
-   //5. Vincula la funcion con pub/sub de nuevos archivos
-   //===========================================================================
-   this.fileWatcher.subscribeToWatchFile(this.dispacthForNewFile);
-   */
-		}
-	}, {
-		key: 'dispatchForNewFile',
-		value: function dispatchForNewFile(data) {
+			//===========================================================================
+			//2. Empieza a escuchar por nuevos archivos en la carpeta seleccionada
+			//===========================================================================
+			this.fileWatcher = new FileWatcher(pathToSource);
+			var token = this.fileWatcher.subscribeToWatchFile(this.dispatchForNewFile);
+			console.log(token);
 
-			console.log('Data desde dispatchForNewFile... ' + data);
+			this.fileWatcher.startWatchForFiles(function (data) {
+
+				console.log('Nuevo archivo ingresado... ' + data);
+			});
+
+			//===========================================================================
+			//3. Inicializa el cliente de webtorrent
+			//===========================================================================
+			this.wtClient = new WtClient();
+
+			//===========================================================================
+			//4. Empieza a escuchar los sockets
+			//===========================================================================
+			this.socketsServer.startToListenSocketsEvents(this.db, this.wtClient);
 		}
 	}]);
 

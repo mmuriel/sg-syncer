@@ -11,9 +11,7 @@ var WebSocketsServer = function () {
 		_classCallCheck(this, WebSocketsServer);
 
 		/* Instancia un servidor de websockets */
-		this.socketServer = new socketio();
-		/* Vincula el server HTTP al WebSocket Server */
-		this.socketServer.listen(httpServer);
+		this.socketServer = new socketio(httpServer);
 	}
 
 	_createClass(WebSocketsServer, [{
@@ -31,7 +29,7 @@ var WebSocketsServer = function () {
 				/* Registra el socket */
 				socket.emit('message', { 'message': 'Te has conectado al servidor  de sockets exitosamente...' });
 				//console.log(socketServer.sockets);
-				//console.log(socket.client);
+				console.log(socket.client);
 
 				/* -------- */
 				socket.on('subscribe', function (data) {
@@ -47,7 +45,7 @@ var WebSocketsServer = function () {
 				});
 
 				socket.on('message', function (data) {
-					console.log(data.message);
+					socket.emit('messageresponse', { "message": "200" });
 				});
 
 				socket.on('getlasttorrents', function (data) {

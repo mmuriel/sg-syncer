@@ -24,6 +24,7 @@ let SgDb = require('../dist/sg-syncer/classes/SgDb.js');
 let SgHelpers = require('../dist/sg-syncer/classes/SgHelpers.js');
 let WebServer = require('../dist/sg-syncer/models/WebServer.js');
 let WebSocketsServer = require('../dist/sg-syncer/models/WebSocketsServer.js');
+let SoapClient = require('../dist/sg-syncer/models/SoapClient.js');
 
 
 
@@ -186,37 +187,84 @@ describe('WebSocketServer',function(){
 
 
 
-	it (`Al generar un nuevo torrent en el servidor de contenidos, se recibe una cadena de caracteres tipo magnet en los equipos cliente SIBAGUIDE`,(done)=>{
-
-		
-		chai.assert.isOk(true,'Ha ocurrido un error iniciando el servidor web base del servidor de sockets');
-		
-
-	})
-
 
 
 	
 	it (`Al conectar un cliente al servidor de sockets debe recibir el mensaje: Te has conectado al servidor  de sockets exitosamente...`,(done)=>{
 
-		
 		let socket = socketIoClient.connect(SgCnf.socketEndPoint);
-
-		socket.on('message',(data)=>{
-
-			console.log(data);
-			done();
-		});
-		
-		socket.on('connect',()=>{
-
+		socket.on('connect',(data)=>{
+			console.log("		Se conecto exitosamente el socket...");
 			chai.assert.isOk(true,"No fallo la conexión al socket");
 			done();
 		});
+	})
+
+
+
+
+	it (`Al generar un nuevo torrent en el servidor de contenidos, se recibe una cadena de caracteres tipo magnet en los equipos cliente SIBAGUIDE`,(done)=>{
+
+
+		let socket2 = socketIoClient.connect(SgCnf.socketEndPoint);
+		socket2.on("new torrent",(data)=>{
+			//console.log("Un nuevo torrent ha llegado...");
+			chai.assert.equal('a9g919danc183odc1038d9387vur9829co98af3189',data.message);
+			done();
+		});
+
+		setTimeout(()=>{
+			socketiosrv.emmitMessageToSockets ('new torrent',{'message': 'a9g919danc183odc1038d9387vur9829co98af3189'});
+		},1500);
+		//console.log(socketiosrv.socketServer.sockets);
 		//done();
 	})
 
+
+	it (`Un cliente SIBA envia un mensaje al servidor, este responde con un mensaje codigo 200`,(done)=>{
+
+		let socket3 = socketIoClient.connect(SgCnf.socketEndPoint);
+		socket3.on("messageresponse",(data)=>{
+			console.log("		Capturando la respuesta del servidor.");
+			chai.assert.equal('200',data.message);
+			done();
+		});
+		
+		setTimeout(()=>{
+			console.log(`		Emitiendo desde el setTimeout #1`);
+			socket3.emit('message',{'message': 'MMMMMM'},(data)=>{
+				console.log(`		Respuesta desde el servidor de sockets: ${data}`);
+			});
+			setTimeout(()=>{
+				console.log("		Emitiendo desde el setTimeout #2");
+				done();
+			},1200)
+		},1200);
+		
+		
+		//console.log(socketiosrv.socketServer.sockets);
+		//done();
+	})
 })
+
+
+
+describe('SoapClient',function(){
+	//Sets timeout more than default 2000 milisecs
+	this.timeout(10000);
+	it (`Inicializa el cliente SOAP verifica que el cliente soap apunte al endpoint correcto ${SgCnf.wsdl}`,(done)=>{
+		let spClient = new SoapClient(SgCnf.wsdl);
+		//chai.assert.equal(sgHelper.getStrDateTimeForDB(dateTest),'2017-01-01 01:10:08.000',`La fecha generada no tiene el formato correcto para adicionar a la DB sqlite`);
+		setTimeout(()=>{
+			console.log(typeof spClient.soapClient.describe().SibaControllerService.clientValidate);
+			//chai.assert.isOk((typeof spClient.soapClient.describe().SibaControllerService.clientValidates != 'undefined'),`El WS SOAP no presenta un método denominado: clientValidate`);
+			done();
+		},2000);
+	});
+	
+});
+
+
 
 
 

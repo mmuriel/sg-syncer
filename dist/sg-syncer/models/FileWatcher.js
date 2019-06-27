@@ -32,7 +32,7 @@ var FileWatcher = function () {
 		value: function subscribeToWatchFile(callback) {
 
 			var token = (++this.subUid).toString();
-			this.callBacks.push({ callback: callback, token: token });
+			this.callBacks.push({ fncallback: callback, token: token });
 			return token;
 		}
 	}, {
@@ -41,7 +41,7 @@ var FileWatcher = function () {
 
 			for (var i = 0; i < this.callBacks.length; i++) {
 
-				this.callBacks[i].callback(data);
+				if (typeof this.callBacks[i].fncallback == 'function') this.callBacks[i].fncallback(data);
 			}
 			return true;
 		}
