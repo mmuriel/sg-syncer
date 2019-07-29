@@ -46,7 +46,7 @@ class WtClient{
 
 			this.wtClient.seed(pathToFile,torrentOpts,(torrent)=>{
 
-				console.log(`Se ha iniciado el proceso de 'seeding' para el torrent:  torrent.infoHash`);
+				console.log(`Se ha iniciado el proceso de 'seeding' para el torrent:  ${torrent.infoHash}`);
 				this.startLoggingTorrentActivity(torrent);
 				resolve(torrent);
 
@@ -96,44 +96,44 @@ class WtClient{
 
 		torrentRaw.on('infohash',(data)=>{
 
-				console.log(`Infohash: ${data}`);
+				console.log(`[${torrentRaw.infoHash}] Infohash event: ${data}`);
 
 			})
 
 			torrentRaw.on('metadata',(data)=>{
 
-				console.log(`Metadata: ${data}`);
+				console.log(`[${torrentRaw.infoHash}] Metadata event: ${data}`);
 
 			})
 
 			torrentRaw.on('ready',(data)=>{
 
-				console.log(`Ready: ${data}`);
+				console.log(`[${torrentRaw.infoHash}] Ready event: ${data}`);
 
 			})
 
 			torrentRaw.on('warning',(data)=>{
 
-				console.log(`Warning: ${data}`);
+				console.log(`[${torrentRaw.infoHash}] Warning event: ${data}`);
 
 			})
 
 			torrentRaw.on('error',(data)=>{
 
-				console.log(`Error: ${data}`);
+				console.log(`[${torrentRaw.infoHash}] Error event: ${data}`);
 				reject(data);
 
 			})
 
 			torrentRaw.on('download',(data)=>{
 
-				console.log(`Download: ${data}`);
+				console.log(`[${torrentRaw.infoHash}] Download event: ${data}`);
 
 			})
 
 			torrentRaw.on('wire',(data)=>{
 
-				console.log(`Wire: ${data}`);
+				console.log(`[${torrentRaw.infoHash}] Wire event: ${data}`);
 
 			})
 

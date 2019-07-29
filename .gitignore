@@ -44,5 +44,6 @@ test/files/db/test.db
 
 # Evitando versionamiento para cualquier archivo de configuración
 sg-syncer/SgCnf.js
+dist/sg-syncer/SgCnf.js
 dist/SgCnf.js
 lib/SgCnf.js
