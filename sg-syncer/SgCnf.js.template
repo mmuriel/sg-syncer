@@ -1,7 +1,7 @@
 //Archivo de configuración del modulo
 var SgCnf = {
 
-	sgtoken : 'COL102', //Token to identify the client in network
+	sgtoken : 'XXXXXX', //Token to identify the client in network
 	torrentOpt : {
 		  //announce: [],              // Torrent trackers to use (added to list in .torrent or magnet uri)
 		  //getAnnounceOpts: Function, // Custom callback to allow sending extra parameters to the tracker
@@ -9,11 +9,13 @@ var SgCnf = {
 		  //path: '/videos/',              // Folder to download files to (default=`/tmp/webtorrent/`)
 		  //store: Function            // Custom chunk store (must follow [abstract-chunk-store](https://www.npmjs.com/package/abstract-chunk-store) API)
 		},
-	pathToSource: '/videos/', //Path in filesystem to watch for new added files.
-	pathToDest:'/videos/', //Path in filesystem to save downloaded files
-	socketEndPoint:'http://s12.sientifica.com:9000',//Socketio server URL
-	pathToDb: __dirname+'/../db/sgdb.db',//Path to sqlite DB
-	httpPort: '9000'
+	pathToSource: '/Path/to/videos/', //Path in filesystem to watch for new added files.
+	pathToDest:'/Path/to/videos/', //Path in filesystem to save downloaded files
+	socketEndPoint:'http://localhost:9000',//Socketio server URL
+	pathToDb: __dirname+'/../../db/sgdb.db',//Path to sqlite DB
+	httpPort: '9000',
+	pathToPublic: __dirname+'/../../public/', //Path in filesystem to public http root folder
+	wsdl: 'http://xxx.xxxx.xxx/siba/wsdl',//Wsdl endpoint to report videos downloaded or not
 
 };
 
