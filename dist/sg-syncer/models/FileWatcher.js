@@ -23,8 +23,11 @@ var FileWatcher = function () {
 
 		this.callBacks = [];
 		this.subUid = -1;
-		this.watcher = chokidar.watch(pathToSource);
-		//this.publishNewFile = this.publishNewFile.bind(this);
+		this.watcher = chokidar.watch(pathToSource, { awaitWriteFinish: {
+				stabilityThreshold: 6000,
+				pollInterval: 100
+			}
+		}); // El parametro awaitWriteFinish:true, sirve para esperar hasta la finalización de la carga del archivo
 	}
 
 	_createClass(FileWatcher, [{
@@ -51,7 +54,7 @@ var FileWatcher = function () {
 			var _this = this;
 
 			this.watcher.on('add', function (pathToSource, data) {
-				var expReg = new RegExp("\\.mov$|\\.mpg$|\\.mpeg$|\\.wmv$");
+				var expReg = new RegExp("\\.mov$|\\.mpg$|\\.mpeg$|\\.wmv$", 'i');
 				if (typeof pathToSource == 'string') {
 
 					if (expReg.test(pathToSource)) {

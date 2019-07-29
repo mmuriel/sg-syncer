@@ -24,7 +24,6 @@ let SgDb = require('../dist/sg-syncer/classes/SgDb.js');
 let SgHelpers = require('../dist/sg-syncer/classes/SgHelpers.js');
 let WebServer = require('../dist/sg-syncer/models/WebServer.js');
 let WebSocketsServer = require('../dist/sg-syncer/models/WebSocketsServer.js');
-let SoapClient = require('../dist/sg-syncer/models/SoapClient.js');
 
 
 
@@ -122,18 +121,22 @@ describe('SgHelpers',function(){
 describe('SgDb',function(){
 	//Sets timeout more than default 2000 milisecs
 	this.timeout(50000);
-	it ('Agrega un nuevo registro a la DB y debe retornar un valor numerico mayor que cero (el ID dentro de la DB)',function(done){
-		
-		let sgHelper = new SgHelpers();
-		let fileToDBTest = __dirname+"/files/db/test.db";
-		let sgdb = new SgDb(fileToDBTest);
-		let dateNow = new Date();
-		let values = {
+	let dateNow = new Date();
+	let sgHelper = new SgHelpers();
+	let fileToDBTest = __dirname+"/files/db/test.db";
+	let sgdb = new SgDb(fileToDBTest);
+	let values = {
 			hashid:`Ad205i28DfGG`+Math.random(100,10000),
 			created_at:sgHelper.getStrDateTimeForDB(dateNow),
 			magnetURI:'magnet:?xt=urn:btih:208437b0350cf9794f8d903719e73c052c5cdb17&dn=logo_fusm_colombia.png&tr=udp%3A%2F%2Fexplodie.org%3A6969&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A80&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337&tr=udp%3A%2F%2Fzer0day.ch%3A1337&tr=wss%3A%2F%2Ftracker.btorrent.xyz&tr=wss%3A%2F%2Ftracker.fastcast.nz&tr=wss%3A%2F%2Ftracker.openwebtorrent.com',
 			filename:'TEST FILE' 
 		};
+
+
+	it ('Agrega un nuevo registro a la DB y debe retornar un valor numerico mayor que cero (el ID dentro de la DB)',function(done){
+		
+		
+				
 		let promInsert = sgdb.insert('torrents',values);
 		promInsert.then(function(data){
 			//Verifica que el objeto contruido por el método sea uno tipo torrent
@@ -152,6 +155,41 @@ describe('SgDb',function(){
 			done();
 		});
 	});
+
+
+	it ('Recupera mediante el comando select el registro anteriormente registrado',function(done){
+
+		let promSelect = sgdb.select('torrents','*',`(hashid = '${values.hashid}')`);
+		promSelect.then(function(data){
+			chai.assert.isArray(data,'No es un array el retorno de la busqueda en el comando select');
+			chai.assert.equal(data.length,1,'No se han retornado elementos en la busqueda');
+			done();			
+		});
+		promSelect.catch(function(err){
+
+			//chai.assert.isNotOk('error', `Ha ocurrido un error generando el torrent a partir `);
+			console.log(err);
+			done();
+		});
+
+	});
+
+
+	it ('Intenta un comando select que no retorna nada',function(done){
+
+		let promSelectNoReturnData = sgdb.select('torrents','*',`(hashid = 'MMMMMM')`);
+		promSelectNoReturnData.then(function(data){
+			chai.assert.equal(data.length,0,'No se han retornado elementos en la busqueda');
+			done();			
+		});
+		promSelectNoReturnData.catch(function(err){
+
+			//chai.assert.isNotOk('error', `Ha ocurrido un error generando el torrent a partir `);
+			console.log(err);
+			done();
+		});
+
+	})
 });
 
 
@@ -214,7 +252,7 @@ describe('WebSocketServer',function(){
 		});
 
 		setTimeout(()=>{
-			socketiosrv.emmitMessageToSockets ('new torrent',{'message': 'a9g919danc183odc1038d9387vur9829co98af3189'});
+			socketiosrv.emitMessageToSockets ('new torrent',{'message': 'a9g919danc183odc1038d9387vur9829co98af3189'});
 		},1500);
 		//console.log(socketiosrv.socketServer.sockets);
 		//done();
@@ -247,22 +285,6 @@ describe('WebSocketServer',function(){
 	})
 })
 
-
-
-describe('SoapClient',function(){
-	//Sets timeout more than default 2000 milisecs
-	this.timeout(10000);
-	it (`Inicializa el cliente SOAP verifica que el cliente soap apunte al endpoint correcto ${SgCnf.wsdl}`,(done)=>{
-		let spClient = new SoapClient(SgCnf.wsdl);
-		//chai.assert.equal(sgHelper.getStrDateTimeForDB(dateTest),'2017-01-01 01:10:08.000',`La fecha generada no tiene el formato correcto para adicionar a la DB sqlite`);
-		setTimeout(()=>{
-			console.log(typeof spClient.soapClient.describe().SibaControllerService.clientValidate);
-			//chai.assert.isOk((typeof spClient.soapClient.describe().SibaControllerService.clientValidates != 'undefined'),`El WS SOAP no presenta un método denominado: clientValidate`);
-			done();
-		},2000);
-	});
-	
-});
 
 
 

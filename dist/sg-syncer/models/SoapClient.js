@@ -14,14 +14,24 @@ var SoapClient = function () {
 
     this.soapClient = {};
     soap.createClient(wsdlUrl, function (err, client) {
+
+      console.log("MMMMM...\n");
+      console.log(client);
       _this.soapClient = client;
     });
   }
 
   _createClass(SoapClient, [{
+    key: "describe",
+    value: function describe() {
+
+      return this.soapClient.describe();
+    }
+  }, {
     key: "call",
     value: function call(args, fnSuccess, fnError) {
 
+      //this.soapClient.
       return new Promise(function (fnSuccess, fnError) {
 
         var data = {};

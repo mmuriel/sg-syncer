@@ -39,3 +39,4 @@ jspm_packages
 # Sacando el archivo de configuracion del proyecto
 lib/SgCnf.js
 db/*
+dist/db/*

@@ -16,8 +16,10 @@ var WebServer = function WebServer(pathToPublic, httpPort) {
 
 		var path = url.parse(req.url).pathname;
 		var pathToHtmlFiles = _this.pathToPublic + '' + path;
-		console.log(req.url);
-		console.log(req.method);
+
+		console.log(req.method + ': ' + req.url);
+		console.log('---------------\n');
+
 		switch (path) {
 			case '/':
 				var localIndexHtml = '<!DOCTYPE html>\n\t\t<html>\n\t\t<head>\n\t\t    <meta charset=\'utf-8\'>\n\t\t    <meta name=\'viewport\' content=\'width=device-width, initial-scale=1\'>\n\t\t    <title>SG-Syncer</title>\n\t\t</head>\n\t\t<body>\n\t\t    <h1>SG-Syncer system</h1>\n\t\t</body>\n\t\t</html>';

@@ -18,7 +18,7 @@
   "dependencies": {
     "chokidar": "^1.6.0",
     "memwatch-next": "^0.3.0",
-    "soap": "^0.17.0",
+    "soap": "^0.28.0",
     "socket.io": "^1.4.8",
     "socket.io-client": "^1.4.8",
     "sqlite-sync": "^0.3.6",

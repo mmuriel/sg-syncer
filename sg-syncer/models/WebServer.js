@@ -14,8 +14,10 @@ class WebServer{
 
 		    let path = url.parse(req.url).pathname;
 		    let pathToHtmlFiles = this.pathToPublic+''+path;
-		    console.log(req.url);
-		    console.log(req.method);
+
+		    console.log(`${req.method}: ${req.url}`);
+		    console.log(`---------------\n`);
+		    
 		    switch(path){
 		        case '/':
 		            let localIndexHtml = `<!DOCTYPE html>

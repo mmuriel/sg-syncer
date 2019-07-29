@@ -19,6 +19,23 @@ class WtClient{
 	constructor() {
 
 		this.wtClient = new WebTorrent();	
+		this.addTorrent = this.addTorrent.bind(this);
+		this.seedNewTorrentFile = this.seedNewTorrentFile.bind(this);
+
+
+		this.wtClient.on("error",(error)=>{
+
+			console.log(`WtClient.OnError event: ${error}`);
+
+		});
+
+
+
+		this.wtClient.on("torrent",(torrent)=>{
+
+			console.log(`OnTorrent event: ${torrent.infoHash}`);
+
+		})
 
 	}
 
@@ -28,6 +45,7 @@ class WtClient{
 
 			this.wtClient.seed(pathToFile,torrentOpts,function(torrent){
 
+				console.log(torrent.magnetURI);
 				resolve(torrent);
 
     		});

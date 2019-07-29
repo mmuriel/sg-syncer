@@ -3,7 +3,7 @@
 //Archivo de configuración del modulo
 var SgCnf = {
 
-	sgtoken: 'COL100', //Token to identify the client in network
+	sgtoken: 'COL102', //Token to identify the client in network
 	torrentOpt: {
 		//announce: [],              // Torrent trackers to use (added to list in .torrent or magnet uri)
 		//getAnnounceOpts: Function, // Custom callback to allow sending extra parameters to the tracker

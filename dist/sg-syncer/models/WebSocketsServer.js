@@ -15,21 +15,32 @@ var WebSocketsServer = function () {
 	}
 
 	_createClass(WebSocketsServer, [{
-		key: 'emmitMessageToSockets',
-		value: function emmitMessageToSockets(eventType, msgObj) {
+		key: 'emitMessageToSockets',
+		value: function emitMessageToSockets(eventType, msgObj) {
 
 			this.socketServer.sockets.emit(eventType, msgObj);
+		}
+
+		//No probado
+
+	}, {
+		key: 'emitMessageToSingleSocket',
+		value: function emitMessageToSingleSocket(eventType, msgObj, room) {
+			this.socketServer.sockets.in(room).emit(eventType, msgObj);
 		}
 	}, {
 		key: 'startToListenSocketsEvents',
 		value: function startToListenSocketsEvents(sgDb, wtClient) {
+
+			//console.log(this.socketServer);
+			//console.log("\n\n\n");
 
 			this.socketServer.sockets.on('connection', function (socket) {
 
 				/* Registra el socket */
 				socket.emit('message', { 'message': 'Te has conectado al servidor  de sockets exitosamente...' });
 				//console.log(socketServer.sockets);
-				console.log(socket.client);
+				//console.log(socket.client);
 
 				/* -------- */
 				socket.on('subscribe', function (data) {
@@ -40,10 +51,12 @@ var WebSocketsServer = function () {
 					socket.leave(data.room);
 				});
 
+				//Responde a un usuario particular un mensaje
 				socket.on('send', function (data) {
 					socket.sockets.in(data.room).emit('message', data);
 				});
 
+				//Confirma la recepción de un mensaje de manera, global?
 				socket.on('message', function (data) {
 					socket.emit('messageresponse', { "message": "200" });
 				});
@@ -56,7 +69,9 @@ var WebSocketsServer = function () {
 						//Gestiona el exito de la busqueda
 						console.log('Respondiendo a la peticion \'get last torrents\' de Token: ' + data.token);
 						//socket.in(data.token).emit("last torrents",dataDb);
-						socket.emit("last torrents", dataDb);
+						//socket.emit("last torrents",dataDb);
+						//this.socketServer.sockets.in(data.token).emit('', msgObj);
+						this.emitMessageToSingleSocket('last torrents', dataDb, data.token);
 					}, function (dataDb) {
 						//Gestiona el error de la búsqueda
 						console.log(dataDb);

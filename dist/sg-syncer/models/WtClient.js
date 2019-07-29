@@ -22,6 +22,18 @@ var WtClient = function () {
 		_classCallCheck(this, WtClient);
 
 		this.wtClient = new WebTorrent();
+		this.addTorrent = this.addTorrent.bind(this);
+		this.seedNewTorrentFile = this.seedNewTorrentFile.bind(this);
+
+		this.wtClient.on("error", function (error) {
+
+			console.log('WtClient.OnError event: ' + error);
+		});
+
+		this.wtClient.on("torrent", function (torrent) {
+
+			console.log('OnTorrent event: ' + torrent.infoHash);
+		});
 	}
 
 	_createClass(WtClient, [{
@@ -33,6 +45,7 @@ var WtClient = function () {
 
 				_this.wtClient.seed(pathToFile, torrentOpts, function (torrent) {
 
+					console.log(torrent.magnetURI);
 					resolve(torrent);
 				});
 			});
