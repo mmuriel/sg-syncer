@@ -23,7 +23,7 @@ class SgClientController{
 		//===========================================================================
 		//Inicializa los servicios
 		//===========================================================================
-		this.db = new SgDb(pathToDb);
+		this.db = new SgDb(this.sgCnf.pathToDb);
 		this.helpers = new SgHelpers();
 		//===========================================================================
 		//1. Inicilializa el cliente de webtorrent
@@ -39,19 +39,15 @@ class SgClientController{
 
 		this.socket.on('new torrent', (data)=>{
 
-			console.log("Nuevo torrent disponible: "+data.magnetURI);
-			this.addFileToTorrent(data.magnetURI).then((data)=>{
+			console.log("Nuevo torrent disponible: "+data.magnetUri);
+			this.wtClient.addTorrent(data.magnetUri,this.sgCnf.pathToDest).then((torrent) => {
 
-					console.log(`Exito descargando... ${data.infoHash}`);
+				console.log(`Se ha descargado satisfactoriamente el torrent al cliente ${torrent.infoHash}`);
 
-				},
-				function(err){
+			},(err)=>{
+				console.log(`Error descargando el archivo torrent: ${err}`);
+			});
 
-					console.log("Error descargando el torrent");
-					console.log(err);
-
-				}
-			);
 		});
 
 		this.socket.on('connect',()=>{
@@ -63,7 +59,7 @@ class SgClientController{
 			*/
 
 			//Se suscribe a un canal de chat para comunicación privada
-			this.socket.emit('subscribe',{'room':`${SgCnf.sgtoken}`});
+			this.socket.emit('subscribe',{'room':`${this.sgCnf.sgtoken}`});
 
 
 			//Pide los ultimos videos para sincronizarse con el servidor
@@ -74,57 +70,6 @@ class SgClientController{
 
 		});
 	}
-
-	addFileToTorrent (magnetURI){
-
-		return new Promise ((fulfill,reject)=>{
-
-			var resAdd = this.wtClient.add(magnetURI,{},(torrent) => {
-			//wtClient.add(magnetURI,{path:`${SgCnf.pathToDest}`},function (torrent) {	
-
-				//console.log(torrent);
-				//fulfill(torrent);
-				torrent.files.forEach((file) => {
-					console.log('Started saving ' + file.name)
-					file.getBuffer((err, buffer) => {
-						if (err) {
-							console.error('Error downloading ' + file.name)
-							reject(err);//Promise error
-							return
-						}
-						// Mueve el archivo hasta la carpeta de destino 
-						fs.writeFile(`${this.sgCnf.pathToDest}/${file.name}`, buffer, (err) => {
-							if (err == null || typeof err == 'null'){
-							  console.log(`Downloading ${file.name}...`);
-							  //Registra en la base de datos una vez el archivo torrent se ha descargado
-							  let dateNow = new Date();
-							  let values = {
-
-								hashid:`${torrent.infoHash}`,
-								created_at:this.helpers.getStrDateTimeForDB(dateNow),
-								magnetURI:`${torrent.magnetURI}`,
-								filename:`${torrent.name}`
-
-							  };
-							  this.db.insert('torrents',values);
-							  fulfill(torrent);//Promise OK
-							}
-							else{
-							  console.log(err);
-							} 
-						})
-						
-					})
-				})
-			})
-
-			//console.log(resAdd);
-		})
-	}
-
-
-
-
 }
 
 

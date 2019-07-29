@@ -24,6 +24,7 @@ var WtClient = function () {
 		this.wtClient = new WebTorrent();
 		this.addTorrent = this.addTorrent.bind(this);
 		this.seedNewTorrentFile = this.seedNewTorrentFile.bind(this);
+		this.startLoggingTorrentActivity = this.startLoggingTorrentActivity.bind(this);
 
 		this.wtClient.on("error", function (error) {
 
@@ -45,7 +46,8 @@ var WtClient = function () {
 
 				_this.wtClient.seed(pathToFile, torrentOpts, function (torrent) {
 
-					console.log(torrent.magnetURI);
+					console.log('Se ha iniciado el proceso de \'seeding\' para el torrent:  torrent.infoHash');
+					_this.startLoggingTorrentActivity(torrent);
 					resolve(torrent);
 				});
 			});
@@ -81,41 +83,47 @@ var WtClient = function () {
 					});
 				});
 				//======================================
-				torrentRaw.on('infohash', function (data) {
+				_this2.startLoggingTorrentActivity(torrentRaw);
+			});
+		}
+	}, {
+		key: 'startLoggingTorrentActivity',
+		value: function startLoggingTorrentActivity(torrentRaw) {
 
-					console.log('Infohash: ' + data);
-				});
+			torrentRaw.on('infohash', function (data) {
 
-				torrentRaw.on('metadata', function (data) {
+				console.log('Infohash: ' + data);
+			});
 
-					console.log('Metadata: ' + data);
-				});
+			torrentRaw.on('metadata', function (data) {
 
-				torrentRaw.on('ready', function (data) {
+				console.log('Metadata: ' + data);
+			});
 
-					console.log('Ready: ' + data);
-				});
+			torrentRaw.on('ready', function (data) {
 
-				torrentRaw.on('warning', function (data) {
+				console.log('Ready: ' + data);
+			});
 
-					console.log('Warning: ' + data);
-				});
+			torrentRaw.on('warning', function (data) {
 
-				torrentRaw.on('error', function (data) {
+				console.log('Warning: ' + data);
+			});
 
-					console.log('Error: ' + data);
-					reject(data);
-				});
+			torrentRaw.on('error', function (data) {
 
-				torrentRaw.on('download', function (data) {
+				console.log('Error: ' + data);
+				reject(data);
+			});
 
-					console.log('Download: ' + data);
-				});
+			torrentRaw.on('download', function (data) {
 
-				torrentRaw.on('wire', function (data) {
+				console.log('Download: ' + data);
+			});
 
-					console.log('Wire: ' + data);
-				});
+			torrentRaw.on('wire', function (data) {
+
+				console.log('Wire: ' + data);
 			});
 		}
 	}]);

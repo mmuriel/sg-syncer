@@ -22,7 +22,7 @@ if(process.argv[2] && typeof process.argv[2] === 'string'){
 		default:
 			let SgClientController = require('./sg-syncer/controllers/SgClientController');
 			let sgclient = new SgClientController(SgCnf);
-			sclient.init();
+			sgclient.init();
 	}
 
 }else{

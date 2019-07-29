@@ -36,7 +36,13 @@ jspm_packages
 # Optional REPL history
 .node_repl_history
 
-# Sacando el archivo de configuracion del proyecto
-lib/SgCnf.js
+# Evitando el versionamiento de los archivos de DB de sqlite
 db/*
 dist/db/*
+test/files/db/test.db
+
+
+# Evitando versionamiento para cualquier archivo de configuración
+sg-syncer/SgCnf.js
+dist/SgCnf.js
+lib/SgCnf.js

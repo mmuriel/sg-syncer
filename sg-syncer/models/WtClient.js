@@ -21,6 +21,7 @@ class WtClient{
 		this.wtClient = new WebTorrent();	
 		this.addTorrent = this.addTorrent.bind(this);
 		this.seedNewTorrentFile = this.seedNewTorrentFile.bind(this);
+		this.startLoggingTorrentActivity = this.startLoggingTorrentActivity.bind(this);
 
 
 		this.wtClient.on("error",(error)=>{
@@ -43,9 +44,10 @@ class WtClient{
 
 		return new Promise((resolve,reject)=>{
 
-			this.wtClient.seed(pathToFile,torrentOpts,function(torrent){
+			this.wtClient.seed(pathToFile,torrentOpts,(torrent)=>{
 
-				console.log(torrent.magnetURI);
+				console.log(`Se ha iniciado el proceso de 'seeding' para el torrent:  torrent.infoHash`);
+				this.startLoggingTorrentActivity(torrent);
 				resolve(torrent);
 
     		});
@@ -84,7 +86,15 @@ class WtClient{
 				})
 			})
 			//======================================
-			torrentRaw.on('infohash',(data)=>{
+			this.startLoggingTorrentActivity(torrentRaw);			
+		})
+	}
+
+
+
+	startLoggingTorrentActivity(torrentRaw){
+
+		torrentRaw.on('infohash',(data)=>{
 
 				console.log(`Infohash: ${data}`);
 
@@ -126,7 +136,7 @@ class WtClient{
 				console.log(`Wire: ${data}`);
 
 			})
-		})
+
 	}
 
 
