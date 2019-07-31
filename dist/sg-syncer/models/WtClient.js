@@ -21,6 +21,13 @@ var WtClient = function () {
 	function WtClient() {
 		_classCallCheck(this, WtClient);
 
+		/*
+  this.wtClient = new WebTorrent({
+  	tracker: {
+  		wrtc
+    		}
+    	});
+    	*/
 		this.wtClient = new WebTorrent();
 		this.addTorrent = this.addTorrent.bind(this);
 		this.seedNewTorrentFile = this.seedNewTorrentFile.bind(this);
@@ -42,12 +49,13 @@ var WtClient = function () {
 		value: function seedNewTorrentFile(pathToFile, torrentOpts) {
 			var _this = this;
 
+			var self = this;
 			return new Promise(function (resolve, reject) {
 
 				_this.wtClient.seed(pathToFile, torrentOpts, function (torrent) {
 
 					console.log('Se ha iniciado el proceso de \'seeding\' para el torrent:  ' + torrent.infoHash);
-					_this.startLoggingTorrentActivity(torrent);
+					self.startLoggingTorrentActivity(torrent);
 					resolve(torrent);
 				});
 			});
@@ -64,8 +72,6 @@ var WtClient = function () {
 					console.log("Lanzando antes del foreach...");
 
 					torrent.files.forEach(function (file) {
-
-						console.log(file);
 						file.getBuffer(function (err, buffer) {
 							if (err) {
 								reject(err); //Promise error

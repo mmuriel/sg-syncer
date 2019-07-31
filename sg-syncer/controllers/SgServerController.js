@@ -59,30 +59,26 @@ class SgServerController{
 
 				//2.2. 	Agrega al cliente de webtorrent el archivos de video,
 				//		en términos del protocolo bittorrent "seed-ea" el archivo
-				this.wtClient.seedNewTorrentFile(data).then((torrent)=>{
-
-					console.log(`Nuevo torrent: ${torrent.path}`);
-
+				this.wtClient.seedNewTorrentFile(data,{}).then((torrent)=>{
 					//2.2.	Una vez "seed-eado" el archivo, se registra en la DB de archivos
 					this.db.select('torrents','*',`(hashid = '${torrent.infoHash}')`).then((data)=>{
-						//console.log(data);
-						if (data.length === 0){
-							let values = {
-								hashid:torrent.infoHash,
-								created_at:this.helpers.getStrDateTimeForDB(new Date()),
-								magnetURI:torrent.magnetURI,
-								filename:torrent.files[0].name
-							};
+						console.log(`Recuperando los datos desde la DB: ${data}`);
+						if (data == 'undefined' || data == null){
+							let values = [
+								torrent.infoHash,
+								this.helpers.getStrDateTimeForDB(new Date()),
+								torrent.magnetURI,
+								torrent.files[0].name
+							];
 							this.db.insert('torrents',values);
 						}
 						else{
 							console.log(`Ya existe el registro del torrent ${torrent.infoHash} en la DB`)
 						}
 					});
-
+					
 					//2.3.	Se notifica a toda la red, de nuevo archivo de video
 					this.socketsServer.emitMessageToSockets('new torrent',{hashid:torrent.infohash,magnetUri:torrent.magnetURI});
-
 				});
 
 			}

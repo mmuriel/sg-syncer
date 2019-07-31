@@ -1,6 +1,6 @@
 'use strict';
-var WebTorrent = require('webtorrent');
-var fs = require('fs');
+const WebTorrent = require('webtorrent');
+const fs = require('fs');
 
 
 /*
@@ -18,39 +18,52 @@ class WtClient{
 
 	constructor() {
 
-		this.wtClient = new WebTorrent();	
+		/*
+		this.wtClient = new WebTorrent({
+			tracker: {
+				wrtc
+    		}
+    	});
+    	*/
+    	this.wtClient = new WebTorrent();	
 		this.addTorrent = this.addTorrent.bind(this);
 		this.seedNewTorrentFile = this.seedNewTorrentFile.bind(this);
 		this.startLoggingTorrentActivity = this.startLoggingTorrentActivity.bind(this);
 
-
+		
 		this.wtClient.on("error",(error)=>{
 
 			console.log(`WtClient.OnError event: ${error}`);
 
 		});
+		
 
 
-
+		
 		this.wtClient.on("torrent",(torrent)=>{
 
 			console.log(`OnTorrent event: ${torrent.infoHash}`);
 
 		})
+		
 
 	}
 
 	seedNewTorrentFile (pathToFile,torrentOpts){
 
+
+		let self = this;
 		return new Promise((resolve,reject)=>{
 
-			this.wtClient.seed(pathToFile,torrentOpts,(torrent)=>{
+			
+			this.wtClient.seed(pathToFile,torrentOpts,function(torrent){
 
 				console.log(`Se ha iniciado el proceso de 'seeding' para el torrent:  ${torrent.infoHash}`);
-				this.startLoggingTorrentActivity(torrent);
+				self.startLoggingTorrentActivity(torrent);
 				resolve(torrent);
 
     		});
+    		
 
 		});
 
@@ -66,8 +79,6 @@ class WtClient{
 				console.log("Lanzando antes del foreach...");
 
 				torrent.files.forEach(function (file) {
-
-					console.log(file);
 					file.getBuffer(function (err, buffer) {
 						if (err) {
 							reject(err);//Promise error

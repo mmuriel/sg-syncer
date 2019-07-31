@@ -51,7 +51,7 @@ describe('FileWatcher',function(){
 
 describe('WtClient',function(){
 	//Sets timeout more than default 2000 milisecs
-	this.timeout(50000);
+	this.timeout(40000);
 	it ('Iniciar un nuevo torrent a partir de un archivo local en el F/S',function(done){
 		let wtClient = new WtClient();
 		let fileToTest = __dirname+"/files/origen/09578301f8d2528f9f0f4a8fa7c17019.mov";
@@ -70,6 +70,8 @@ describe('WtClient',function(){
 			done();
 		});
 	});
+
+
 
 
 	/*
@@ -117,41 +119,45 @@ describe('SgHelpers',function(){
 
 
 
-
 describe('SgDb',function(){
 	//Sets timeout more than default 2000 milisecs
-	this.timeout(50000);
+	this.timeout(15000);
 	let dateNow = new Date();
 	let sgHelper = new SgHelpers();
 	let fileToDBTest = __dirname+"/files/db/test.db";
 	let sgdb = new SgDb(fileToDBTest);
+	/* //OLD Structure
 	let values = {
 			hashid:`Ad205i28DfGG`+Math.random(100,10000),
 			created_at:sgHelper.getStrDateTimeForDB(dateNow),
 			magnetURI:'magnet:?xt=urn:btih:208437b0350cf9794f8d903719e73c052c5cdb17&dn=logo_fusm_colombia.png&tr=udp%3A%2F%2Fexplodie.org%3A6969&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A80&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337&tr=udp%3A%2F%2Fzer0day.ch%3A1337&tr=wss%3A%2F%2Ftracker.btorrent.xyz&tr=wss%3A%2F%2Ftracker.fastcast.nz&tr=wss%3A%2F%2Ftracker.openwebtorrent.com',
 			filename:'TEST FILE' 
 		};
-
-
+	*/
+	let values =[
+			`Ad205i28DfGG${Math.random(100,10000)}`,
+			`${sgHelper.getStrDateTimeForDB(dateNow)}`,
+			'magnet:?xt=urn:btih:208437b0350cf9794f8d903719e73c052c5cdb17&dn=logo_fusm_colombia.png&tr=udp%3A%2F%2Fexplodie.org%3A6969&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A80&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337&tr=udp%3A%2F%2Fzer0day.ch%3A1337&tr=wss%3A%2F%2Ftracker.btorrent.xyz&tr=wss%3A%2F%2Ftracker.fastcast.nz&tr=wss%3A%2F%2Ftracker.openwebtorrent.com',
+			'TEST FILE'
+	];
 	it ('Agrega un nuevo registro a la DB y debe retornar un valor numerico mayor que cero (el ID dentro de la DB)',function(done){
 		
-		
-				
 		let promInsert = sgdb.insert('torrents',values);
-		promInsert.then(function(data){
+		promInsert.then((data)=>{
 			//Verifica que el objeto contruido por el método sea uno tipo torrent
 			//chai.assert.equal(data.constructor.name,'Torrent',`El objeto retornado no es del prototipo Torrent`);
 			//Verifica que el objeto tenga al menos el path esperado
 			//chai.assert.equal(data.path,__dirname+"/files/origen",`El objeto retornado no está definido en el path esperado`);
 			//Temrina el test basado en una promesa
-			chai.assert.isNumber(data,'No se ha retornado un numero como resultado del proceso insert');
-			chai.assert.isAbove(data,0,'El ID no retornado no es mayor que cero');
+			chai.assert.isTrue(data,'No se ha retornado un numero como resultado del proceso insert');
+			//chai.assert.isAbove(data,0,'El ID no retornado no es mayor que cero');
 			done();			
 		});
-		promInsert.catch(function(err){
+		promInsert.catch((err)=>{
 
 			//chai.assert.isNotOk('error', `Ha ocurrido un error generando el torrent a partir `);
-			console.log(err);
+			console.log(`Linea 157: ${err}`);
+			chai.assert.isFalse(true,'Falló algo en el registro de datos a la DB');
 			done();
 		});
 	});
@@ -159,16 +165,17 @@ describe('SgDb',function(){
 
 	it ('Recupera mediante el comando select el registro anteriormente registrado',function(done){
 
-		let promSelect = sgdb.select('torrents','*',`(hashid = '${values.hashid}')`);
-		promSelect.then(function(data){
-			chai.assert.isArray(data,'No es un array el retorno de la busqueda en el comando select');
-			chai.assert.equal(data.length,1,'No se han retornado elementos en la busqueda');
+		let promSelect = sgdb.select('torrents','*',`(hashid = '${values[0]}')`);
+		promSelect.then((data)=>{
+			chai.assert.isObject(data,'No es un array el retorno de la busqueda en el comando select');
+			chai.assert.equal(data.hashid,values[0],'No se han retornado elementos en la busqueda');
 			done();			
 		});
-		promSelect.catch(function(err){
+		promSelect.catch((err)=>{
 
 			//chai.assert.isNotOk('error', `Ha ocurrido un error generando el torrent a partir `);
-			console.log(err);
+			console.log(`Linea 175: ${err}`);
+			chai.assert.isFalse(true,'Falló algo en la recuperación de datos de la DB');
 			done();
 		});
 
@@ -178,18 +185,21 @@ describe('SgDb',function(){
 	it ('Intenta un comando select que no retorna nada',function(done){
 
 		let promSelectNoReturnData = sgdb.select('torrents','*',`(hashid = 'MMMMMM')`);
-		promSelectNoReturnData.then(function(data){
-			chai.assert.equal(data.length,0,'No se han retornado elementos en la busqueda');
+		promSelectNoReturnData.then((data)=>{
+			chai.assert.isUndefined(data,'No se han retornado elementos en la busqueda');
 			done();			
 		});
 		promSelectNoReturnData.catch(function(err){
 
 			//chai.assert.isNotOk('error', `Ha ocurrido un error generando el torrent a partir `);
-			console.log(err);
+			console.log(`Linea 195: ${err}`);
+			chai.assert.isFalse(true,'Falló algo en la recuperación de datos de la DB');
 			done();
 		});
 
 	})
+
+
 });
 
 
@@ -197,7 +207,7 @@ describe('WebSocketServer',function(){
 
 
 
-	this.timeout(50000);
+	this.timeout(30000);
 	let pathToPublic = __dirname+"/public/";
 	let webserver = new WebServer(pathToPublic,SgCnf.httpPort);
 	let socketiosrv = new WebSocketsServer(webserver.wserver);	

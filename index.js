@@ -1,6 +1,9 @@
 'use strict';
+//require('events').EventEmitter.prototype._maxListeners = 1000;
 var SgCnf = require('./dist/sg-syncer/SgCnf');
+var SegfaultHandler = require('segfault-handler');
 
+SegfaultHandler.registerHandler("crash.log"); 
 
 
 // get the second argument passed
